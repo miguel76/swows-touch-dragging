@@ -2,7 +2,7 @@
 				@prefix df: <http://www.swows.org/dataflow#> . 
 				@prefix swi: <http://www.swows.org/instance#> . 
 				@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
-			<#defaultInput> a df:SelectGraph ;df:uiData[ df:positionX "20"^^xsd:integer; df:positionY "20"^^xsd:integer ] ;df:input swi:InputDataset .swi:OutputDataset a df:InlineDataset ;df:input <#Construct%201> ;df:uiData[ df:positionX "350"^^xsd:integer; df:positionY "350"^^xsd:integer ] .<#Construct%201> a df:ConstructGraph ;df:name "Construct 1" ;df:uiData[ df:positionX "207"^^xsd:integer; df:positionY "133"^^xsd:integer ] ;df:configTxt '''PREFIX nn:    <http://www.swows.org/xml/no-namespace#>
+			<#defaultInput> a df:SelectGraph ;df:uiData[ df:positionX "20"^^xsd:integer; df:positionY "20"^^xsd:integer ] ;df:input swi:InputDataset .swi:OutputDataset a df:InlineDataset ;df:input <#Construct%25201> ;df:uiData[ df:positionX "350"^^xsd:integer; df:positionY "350"^^xsd:integer ] .<#View> a df:ConstructGraph ;df:name "View" ;df:uiData[ df:positionX "207"^^xsd:integer; df:positionY "133"^^xsd:integer ] ;df:configTxt '''PREFIX nn:    <http://www.swows.org/xml/no-namespace#>
 PREFIX xml:   <http://www.swows.org/2013/07/xml-dom#>
 PREFIX svg:   <http://www.w3.org/2000/svg#>
 PREFIX xlink: <http://www.w3.org/1999/xlink#>
@@ -29,4 +29,27 @@ CONSTRUCT {
     nn:height "150" ;
     xlink:href "http://media.tvblog.it/p/pap/paperino.jpg" .
 }
-WHERE { }''' .
+WHERE { }''' .<#Images> a df:ConstructGraph ;df:name "Images" ;df:uiData[ df:positionX "599"^^xsd:integer; df:positionY "103"^^xsd:integer ] ;df:configTxt '''# Images from artworks of Amedeo Modigliani
+PREFIX fb: <http://rdf.freebase.com/ns/>
+PREFIX dbpedia: <http://dbpedia.org/resource/>
+PREFIX dbp-ont: <http://dbpedia.org/ontology/>
+PREFIX umbel-sc: <http://umbel.org/umbel/sc/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ff: <http://factforge.net/>
+PREFIX afn: <http://jena.hpl.hp.com/ARQ/function#>
+
+SELECT DISTINCT ?artwork ?image ?uri ?sizeX ?sizeY
+WHERE {
+    dbpedia:Amedeo_Modigliani fb:visual_art.visual_artist.artworks ?artwork .
+    ?artwork fb:common.topic.image ?image .
+    ?image
+		fb:type.content.source ?source ;
+    	fb:common.image.size ?size .
+    ?source fb:type.content_import.uri ?uri .
+    ?size
+        fb:measurement_unit.rect_size.x ?sizeX ;
+        fb:measurement_unit.rect_size.y ?sizeY .
+  	BIND(afn:sqrt(20000*?sizeX/?sizeY) AS ?newSizeX) .
+   	BIND(?newSizeX*?sizeY/?sizeX AS ?newSizeY) .
+	BIND(?newSizeX*?newSizeY AS ?newSizeTot) .
+}''' .
