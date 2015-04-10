@@ -1,0 +1,32 @@
+
+				@prefix df: <http://www.swows.org/dataflow#> . 
+				@prefix swi: <http://www.swows.org/instance#> . 
+				@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
+			<#defaultInput> a df:SelectGraph ;df:uiData[ df:positionX "20"^^xsd:integer; df:positionY "20"^^xsd:integer ] ;df:input swi:InputDataset .swi:OutputDataset a df:InlineDataset ;df:input <#Construct%201> ;df:uiData[ df:positionX "350"^^xsd:integer; df:positionY "350"^^xsd:integer ] .<#Construct%201> a df:ConstructGraph ;df:name "Construct 1" ;df:uiData[ df:positionX "207"^^xsd:integer; df:positionY "133"^^xsd:integer ] ;df:configTxt '''PREFIX nn:    <http://www.swows.org/xml/no-namespace#>
+PREFIX xml:   <http://www.swows.org/2013/07/xml-dom#>
+PREFIX svg:   <http://www.w3.org/2000/svg#>
+PREFIX xlink: <http://www.w3.org/1999/xlink#>
+PREFIX swi:   <http://www.swows.org/instance#>
+
+CONSTRUCT {
+
+  <#svgDoc>
+    a xml:Document ;
+    xml:hasChild <#svgElem> .
+
+  <#svgElem>
+    a svg:svg ;
+    nn:version "1.1" ;
+    nn:width "1000" ;
+    nn:height "1000" ;
+    xml:hasChild <#paperino> .
+
+  <#paperino>
+    a svg:image ;
+    nn:x "10" ;
+    nn:y "10" ;
+    nn:width "100" ;
+    nn:height "150" ;
+    xlink:href "http://media.tvblog.it/p/pap/paperino.jpg" .
+}
+WHERE { }''' .

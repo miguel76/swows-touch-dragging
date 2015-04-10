@@ -1,0 +1,14 @@
+@prefix calli: <http://callimachusproject.org/rdf/2009/framework#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<> a </SWOWS/system/Pipeline> ;
+    rdfs:label "Moving test" ;
+    calli:administrator </auth/groups/admin> ;
+    calli:editor </auth/groups/power> , </auth/groups/staff> ;
+    calli:reader </auth/groups/public> , </auth/groups/system> ;
+    calli:subscriber </auth/groups/everyone> ;
+    <http://www.swows.org/2013/09/pipeline#hasDataflowGraph> <moving+test-Internal-Data/dataflow> ;
+    <http://www.swows.org/2013/09/pipeline#hasInnerDataFolder> <moving+test-Internal-Data> ;
+    <http://www.swows.org/2013/09/pipeline#hasPipelineGraph> <moving+test-Internal-Data/pipeline> ;
+    <http://www.swows.org/2013/09/pipeline#hasPipelineLayoutGraph> <moving+test-Internal-Data/pipeline-layout> .
