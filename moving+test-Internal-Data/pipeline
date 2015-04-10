@@ -19,7 +19,18 @@
 		"Default Output";
 	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
 		<http://www.swows.org/2013/09/pipeline#outputdefault>.
-<components/2/touchEvent>
+<components/2/touches>
+	<http://www.swows.org/2013/09/pipeline#Color>
+		"Red";
+	<http://www.swows.org/2013/09/pipeline#ConnectedComponentCode>
+		<components/222>;
+	<http://www.swows.org/2013/09/pipeline#Name>
+		"Touches";
+	<http://www.swows.org/2013/09/pipeline#Shape>
+		"Dot";
+	<http://www.swows.org/2013/09/pipeline#Type>
+		"FROM NAMED".
+<components/222/touchEvent>
 	<http://www.swows.org/2013/09/pipeline#Color>
 		"Red";
 	<http://www.swows.org/2013/09/pipeline#ConnectedComponentCode>
@@ -30,6 +41,17 @@
 		"Dot";
 	<http://www.swows.org/2013/09/pipeline#Type>
 		"FROM NAMED".
+<components/222>
+	<http://www.swows.org/2013/09/pipeline#ID>
+		"touches";
+	<http://www.swows.org/2013/09/pipeline#InputList>
+		<components/222/touchEvent>;
+	<http://www.swows.org/2013/09/pipeline#Name>
+		"touches";
+	<http://www.swows.org/2013/09/pipeline#Query>
+		"INSERT {\n  ?s ?p ?o .\n}\nWHERE {\n  GRAPH <#touchEvent> {\n    ?s ?p ?o .\n  }\n}";
+	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
+		<http://www.swows.org/2013/09/pipeline#updatable>.
 <components/22>
 	<http://www.swows.org/2013/09/pipeline#ID>
 		"Images";
@@ -43,11 +65,11 @@
 	<http://www.swows.org/2013/09/pipeline#ID>
 		"View";
 	<http://www.swows.org/2013/09/pipeline#InputList>
-		<components/2/touchEvent>;
+		<components/2/touches>;
 	<http://www.swows.org/2013/09/pipeline#Name>
 		"View";
 	<http://www.swows.org/2013/09/pipeline#Query>
-		"PREFIX nn:    <http://www.swows.org/xml/no-namespace#>\nPREFIX xml:   <http://www.swows.org/2013/07/xml-dom#>\nPREFIX svg:   <http://www.w3.org/2000/svg#>\nPREFIX xlink: <http://www.w3.org/1999/xlink#>\nPREFIX swi:   <http://www.swows.org/instance#>\n\nCONSTRUCT {\n\n  <#svgDoc>\n    a xml:Document ;\n    xml:hasChild <#svgElem> .\n\n  <#svgElem>\n    a svg:svg ;\n    nn:version \"1.1\" ;\n    nn:width \"1000\" ;\n    nn:height \"1000\" ;\n    xml:listenedEventType \"touchstart\", \"touchmove\", \"touchend\";\n    xml:hasChild <#paperino> .\n\n  <#paperino>\n    a svg:image ;\n    nn:x \"10\" ;\n    nn:y \"10\" ;\n    nn:width \"100\" ;\n    nn:height \"150\" ;\n    xlink:href \"http://media.tvblog.it/p/pap/paperino.jpg\" .\n\n  <#input>\n    a svg:text ;\n    nn:x \"100\" ;\n    nn:y \"100\" ;\n    nn:width \"300\" ;\n    nn:height \"200\" ;\n    xml:textContent \"prova\" .\n}\nWHERE {\n  GRAPH <#touchEvent> {\n  }\n}";
+		"PREFIX nn:    <http://www.swows.org/xml/no-namespace#>\nPREFIX xml:   <http://www.swows.org/2013/07/xml-dom#>\nPREFIX svg:   <http://www.w3.org/2000/svg#>\nPREFIX xlink: <http://www.w3.org/1999/xlink#>\nPREFIX swi:   <http://www.swows.org/instance#>\n\nCONSTRUCT {\n\n  <#svgDoc>\n    a xml:Document ;\n    xml:hasChild <#svgElem> .\n\n  <#svgElem>\n    a svg:svg ;\n    nn:version \"1.1\" ;\n    nn:width \"1000\" ;\n    nn:height \"1000\" ;\n    xml:listenedEventType \"touchstart\", \"touchmove\", \"touchend\";\n    xml:hasChild <#input> .\n\n#  <#paperino>\n#    a svg:image ;\n#    nn:x \"10\" ;\n#    nn:y \"10\" ;\n#    nn:width \"100\" ;\n#    nn:height \"150\" ;\n#    xlink:href \"http://media.tvblog.it/p/pap/paperino.jpg\" .\n\n  <#input>\n    a svg:text ;\n    nn:x \"150\" ;\n    nn:y \"100\" ;\n    nn:width \"300\" ;\n    nn:height \"200\" ;\n    xml:textContent ?text .\n}\nWHERE {\n  {\n  SELECT (GROUP_CONCAT(DISTINCT STR(?s)) AS ?subjects)\n  WHERE {\n    GRAPH <#touches> {\n      ?s ?p ?o .\n    } .\n#    BIND(IF(isIRI(?s), CONCAT('<', STR(?s), '>'), IF(isBlank(?s), CONCAT('<', ?s, '>'), ) ) AS ?sStr)\n  }\n  }\n  BIND(CONCAT(\"Subjects: \", ?subjects, \".\") AS ?text).\n}\n";
 	<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
 		<http://www.swows.org/2013/09/pipeline#construct>.
 

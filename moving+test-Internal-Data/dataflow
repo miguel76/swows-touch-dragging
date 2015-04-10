@@ -2,7 +2,14 @@
 				@prefix df: <http://www.swows.org/dataflow#> . 
 				@prefix swi: <http://www.swows.org/instance#> . 
 				@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
-			<#defaultInput> a df:SelectGraph ;df:input swi:InputDataset .swi:OutputDataset a df:InlineDataset ; df:input <#View>  . <#Images> a df:ConstructGraph ;df:name "Images" ;df:configTxt '''# Images from artworks of Amedeo Modigliani
+			<#defaultInput> a df:SelectGraph ;df:input swi:InputDataset .swi:OutputDataset a df:InlineDataset ; df:input <#View>  . <#touches> a df:UpdatableGraph ;df:name "touches" ;df:input [ a df:InlineDataset ;df:namedInput [a df:NamedGraph ; df:name "Touch Event" ; df:input <#defaultInput> ; df:id <#touchEvent> ];];df:configTxt '''INSERT {
+  ?s ?p ?o .
+}
+WHERE {
+  GRAPH <#touchEvent> {
+    ?s ?p ?o .
+  }
+}''' .<#Images> a df:ConstructGraph ;df:name "Images" ;df:configTxt '''# Images from artworks of Amedeo Modigliani
 PREFIX fb: <http://rdf.freebase.com/ns/>
 PREFIX dbpedia: <http://dbpedia.org/resource/>
 PREFIX dbp-ont: <http://dbpedia.org/ontology/>
@@ -25,7 +32,7 @@ WHERE {
   	BIND(afn:sqrt(20000*?sizeX/?sizeY) AS ?newSizeX) .
    	BIND(?newSizeX*?sizeY/?sizeX AS ?newSizeY) .
 	BIND(?newSizeX*?newSizeY AS ?newSizeTot) .
-}''' .<#View> a df:ConstructGraph ;df:name "View" ;df:input [ a df:InlineDataset ;df:namedInput [a df:NamedGraph ; df:name "Touch Event" ; df:input <#defaultInput> ; df:id <#touchEvent> ];];df:configTxt '''PREFIX nn:    <http://www.swows.org/xml/no-namespace#>
+}''' .<#View> a df:ConstructGraph ;df:name "View" ;df:input [ a df:InlineDataset ;df:namedInput [a df:NamedGraph ; df:name "Touches" ; df:input <#touches> ; df:id <#touches> ];];df:configTxt '''PREFIX nn:    <http://www.swows.org/xml/no-namespace#>
 PREFIX xml:   <http://www.swows.org/2013/07/xml-dom#>
 PREFIX svg:   <http://www.w3.org/2000/svg#>
 PREFIX xlink: <http://www.w3.org/1999/xlink#>
@@ -43,25 +50,34 @@ CONSTRUCT {
     nn:width "1000" ;
     nn:height "1000" ;
     xml:listenedEventType "touchstart", "touchmove", "touchend";
-    xml:hasChild <#paperino> .
+    xml:hasChild <#input> .
 
-  <#paperino>
-    a svg:image ;
-    nn:x "10" ;
-    nn:y "10" ;
-    nn:width "100" ;
-    nn:height "150" ;
-    xlink:href "http://media.tvblog.it/p/pap/paperino.jpg" .
+#  <#paperino>
+#    a svg:image ;
+#    nn:x "10" ;
+#    nn:y "10" ;
+#    nn:width "100" ;
+#    nn:height "150" ;
+#    xlink:href "http://media.tvblog.it/p/pap/paperino.jpg" .
 
   <#input>
     a svg:text ;
-    nn:x "100" ;
+    nn:x "150" ;
     nn:y "100" ;
     nn:width "300" ;
     nn:height "200" ;
-    xml:textContent "prova" .
+    xml:textContent ?text .
 }
 WHERE {
-  GRAPH <#touchEvent> {
+  {
+  SELECT (GROUP_CONCAT(DISTINCT STR(?s)) AS ?subjects)
+  WHERE {
+    GRAPH <#touches> {
+      ?s ?p ?o .
+    } .
+#    BIND(IF(isIRI(?s), CONCAT('<', STR(?s), '>'), IF(isBlank(?s), CONCAT('<', ?s, '>'), ) ) AS ?sStr)
   }
-}''' .
+  }
+  BIND(CONCAT("Subjects: ", ?subjects, ".") AS ?text).
+}
+''' .
