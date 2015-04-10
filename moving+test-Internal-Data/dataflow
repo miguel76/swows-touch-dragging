@@ -2,14 +2,14 @@
 				@prefix df: <http://www.swows.org/dataflow#> . 
 				@prefix swi: <http://www.swows.org/instance#> . 
 				@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . 
-			<#defaultInput> a df:SelectGraph ;df:input swi:InputDataset .swi:OutputDataset a df:InlineDataset ; df:input <#View>  . <#touches> a df:UpdatableGraph ;df:name "touches" ;df:input [ a df:InlineDataset ;df:namedInput [a df:NamedGraph ; df:name "Touch Event" ; df:input <#defaultInput> ; df:id <#touchEvent> ];];df:configTxt '''INSERT {
+			<#defaultInput> a df:SelectGraph ;df:input swi:InputDataset .<#touches> a df:UpdatableGraph ;df:name "touches" ;df:configTxt '''INSERT {
   ?s ?p ?o .
 }
 WHERE {
   GRAPH <#touchEvent> {
     ?s ?p ?o .
   }
-}''' .<#Images> a df:ConstructGraph ;df:name "Images" ;df:configTxt '''# Images from artworks of Amedeo Modigliani
+}''' .swi:OutputDataset a df:InlineDataset ; df:input <#View>  . <#Images> a df:ConstructGraph ;df:name "Images" ;df:configTxt '''# Images from artworks of Amedeo Modigliani
 PREFIX fb: <http://rdf.freebase.com/ns/>
 PREFIX dbpedia: <http://dbpedia.org/resource/>
 PREFIX dbp-ont: <http://dbpedia.org/ontology/>
@@ -32,7 +32,7 @@ WHERE {
   	BIND(afn:sqrt(20000*?sizeX/?sizeY) AS ?newSizeX) .
    	BIND(?newSizeX*?sizeY/?sizeX AS ?newSizeY) .
 	BIND(?newSizeX*?newSizeY AS ?newSizeTot) .
-}''' .<#View> a df:ConstructGraph ;df:name "View" ;df:input [ a df:InlineDataset ;df:namedInput [a df:NamedGraph ; df:name "Touches" ; df:input <#touches> ; df:id <#touches> ];];df:configTxt '''PREFIX nn:    <http://www.swows.org/xml/no-namespace#>
+}''' .<#View> a df:ConstructGraph ;df:name "View" ;df:input [ a df:InlineDataset ;df:namedInput [a df:NamedGraph ; df:name "Touches" ; df:input <#defaultInput> ; df:id <#touches> ];];df:configTxt '''PREFIX nn:    <http://www.swows.org/xml/no-namespace#>
 PREFIX xml:   <http://www.swows.org/2013/07/xml-dom#>
 PREFIX svg:   <http://www.w3.org/2000/svg#>
 PREFIX xlink: <http://www.w3.org/1999/xlink#>
@@ -70,14 +70,17 @@ CONSTRUCT {
 }
 WHERE {
   {
-  SELECT (GROUP_CONCAT(DISTINCT STR(?s)) AS ?subjects)
+  SELECT (GROUP_CONCAT(?tripleStr; separator=' ') AS ?triplesStr)
   WHERE {
     GRAPH <#touches> {
       ?s ?p ?o .
     } .
-#    BIND(IF(isIRI(?s), CONCAT('<', STR(?s), '>'), IF(isBlank(?s), CONCAT('<', ?s, '>'), ) ) AS ?sStr)
+    BIND(CONCAT('<', STR(?s), '>') AS ?sStr).
+    BIND(CONCAT('<', STR(?p), '>') AS ?pStr).
+    BIND(IF(isIRI(?o), CONCAT('<', STR(?o), '>'), IF(isNumeric(?o), STR(?o), CONCAT('"', STR(?o), '"')) ) AS ?oStr).
+    BIND(CONCAT(?sStr, ' ', ?pStr, ' ', ?oStr, '.\\n') AS ?tripleStr).
   }
   }
-  BIND(CONCAT("Subjects: ", ?subjects, ".") AS ?text).
+  BIND(?triplesStr AS ?text).
 }
 ''' .
